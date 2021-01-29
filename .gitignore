@@ -1,3 +1,4 @@
 # go mod cache
 .mod/
 authy-*
+.idea/*

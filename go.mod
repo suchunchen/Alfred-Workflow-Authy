@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/alexzorin/authy v0.2.0
+	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/sahilm/fuzzy v0.1.0
 	github.com/spf13/cobra v1.0.0
