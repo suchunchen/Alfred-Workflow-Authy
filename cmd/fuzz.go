@@ -72,7 +72,7 @@ func fuzzySearch(args []string) {
 		for _, v := range results {
 			tokensFound = append(tokensFound, tokens[v.Index])
 		}
-		tokens.Echo2Alfred()
+		tokensFound.Echo2Alfred()
 		return
 	}
 
