@@ -66,7 +66,7 @@ func fuzzySearch(args []string) {
 		return
 	}
 
-	results := fuzzy.FindFrom(args[0], structs.Tokens(tokens))
+	results := fuzzy.FindFrom(args[0], tokens)
 	if alfredCount != nil && *alfredCount > 0 && len(results) > 0 {
 		tokensFound := make(structs.Tokens, 0)
 		for _, v := range results {
