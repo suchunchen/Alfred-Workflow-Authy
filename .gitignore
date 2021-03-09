@@ -2,3 +2,5 @@
 .mod/
 authy-*
 .idea/*
+authy
+data/*

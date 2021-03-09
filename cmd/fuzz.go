@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/momaek/authy/tools"
@@ -60,23 +61,30 @@ func fuzzySearch(args []string) {
 			log.Fatal("get tokens failed", err)
 		}
 	}
+
+	var tokensFound = make(structs.Tokens, 0)
 	// 没有关键词，输出全部
 	if len(args) == 0 {
-		tokens.Echo2Alfred()
-		return
+		tokensFound = tokens
+	} else {
+		results := fuzzy.FindFrom(args[0], tokens)
+		if alfredCount != nil && *alfredCount > 0 && len(results) > 0 {
+			for _, v := range results {
+				tokensFound = append(tokensFound, tokens[v.Index])
+			}
+		}
 	}
 
-	results := fuzzy.FindFrom(args[0], tokens)
-	if alfredCount != nil && *alfredCount > 0 && len(results) > 0 {
-		tokensFound := make(structs.Tokens, 0)
-		for _, v := range results {
-			tokensFound = append(tokensFound, tokens[v.Index])
+	if len(tokensFound) > 0 {
+		if records := getRecords(); len(records) > 0 {
+			sort.Slice(tokensFound, func(i, j int) bool {
+				return records[tokensFound[i].OriginalName.String()] > records[tokensFound[j].OriginalName.String()]
+			})
 		}
+
 		tokensFound.Echo2Alfred()
 		return
 	}
-
-	prettyPrintResult(results, tokens)
 }
 
 const (

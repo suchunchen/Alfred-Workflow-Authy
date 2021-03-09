@@ -39,7 +39,7 @@ type Base32Decode struct {
 
 // DefaultNewBase32Decode 默认base32解码器
 func DefaultNewBase32Decode() *Base32Decode {
-	return NewBase32Decode("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567")
+	return NewBase32Decode(DEFAULT_BASE32_STRING)
 }
 
 // NewBase32Decode 新建base32解码器
