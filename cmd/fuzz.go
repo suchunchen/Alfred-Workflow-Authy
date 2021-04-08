@@ -70,15 +70,25 @@ func fuzzySearch(args []string) {
 		results := fuzzy.FindFrom(args[0], tokens)
 		if alfredCount != nil && *alfredCount > 0 && len(results) > 0 {
 			for _, v := range results {
-				tokensFound = append(tokensFound, tokens[v.Index])
+				token := tokens[v.Index]
+				token.Score = v.Score
+				tokensFound = append(tokensFound, token)
 			}
+		}
+		// 唯一命中，直接输出code，提供给命令行使用
+		if *alfredCount == 0 && len(results) == 1 {
+			token := tokens[results[0].Index]
+			fmt.Println(totp.GetTotpCode(token.Secret, token.Digital)[1])
+			return
 		}
 	}
 
 	if len(tokensFound) > 0 {
 		if records := getRecords(); len(records) > 0 {
 			sort.Slice(tokensFound, func(i, j int) bool {
-				return records[tokensFound[i].OriginalName.String()] > records[tokensFound[j].OriginalName.String()]
+				// 加权搜索得到的分数+访问过的次数
+				return tokensFound[i].Score+records[tokensFound[i].OriginalName.String()] >
+					tokensFound[j].Score+records[tokensFound[j].OriginalName.String()]
 			})
 		}
 

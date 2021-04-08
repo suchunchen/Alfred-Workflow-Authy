@@ -15,8 +15,8 @@ import (
 // fuzzCmd represents the fuzz command
 var recordCmd = &cobra.Command{
 	Use:   "record",
-	Short: "Fuzzy search your otp tokens(case-insensitive)",
-	Long: `Fuzzy search your otp tokens(case-insensitive)
+	Short: "record the code use times",
+	Long: `record the code use times
 
 First time(or after clean cache) , need your authy main password`,
 	Run: func(cmd *cobra.Command, args []string) {
