@@ -17,7 +17,14 @@ func (f FullName) AppName() string {
 	if strings.Contains(f.String(), ":") {
 		return strings.Split(f.String(), ":")[0]
 	}
-	return ""
+	return string(f)
+}
+
+func (f FullName) Account() string {
+	if strings.Contains(f.String(), ":") {
+		return strings.Split(f.String(), ":")[1]
+	}
+	return string(f)
 }
 
 func (f FullName) String() string {
@@ -57,26 +64,17 @@ func (ts Tokens) Echo2Alfred() bool {
 
 	outputs := make([]AlfredOutput, 0)
 	challenge := totp.GetChallenge()
-	appNameExisted := make(map[string]struct{})
 
 	for _, tk := range ts {
 		codes := totp.GetTotpCode(tk.Secret, tk.Digital)
-		var appName = tk.OriginalName.AppName()
-		if _, ok := appNameExisted[appName]; ok {
-			// 如果已重名，那就用全称
-			appName = tk.OriginalName.String()
-		} else {
-			appNameExisted[appName] = struct{}{}
-		}
-
 		outputs = append(outputs, AlfredOutput{
-			Title:    appName,
+			Title:    tk.OriginalName.Account(),
 			Subtitle: tools.MakeSubTitle(challenge, codes[1]),
 			Arg:      codes[1],
 			Valid:    true,
 			Icon: Icon{
 				Type: "",
-				Path: images.AppIconDict[appName],
+				Path: images.AppIconDict[tk.OriginalName.AppName()],
 			},
 		})
 	}

@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/momaek/authy/tools"
 
@@ -137,6 +139,13 @@ func loadCachedTokens() (tks structs.Tokens, err error) {
 	fpath, err := ConfigPath(cacheFileName)
 	if err != nil {
 		return
+	}
+
+	if status, statusErr := os.Stat(fpath); statusErr == nil {
+		// 每天清空一次缓存
+		if (time.Now().Unix()+8*3600)/86400*86400-8*3600 > status.ModTime().Unix() {
+			return tks, errors.New("cache expired")
+		}
 	}
 
 	f, err := os.Open(fpath)
