@@ -16,10 +16,10 @@ import (
 
 	//"time"
 
-	"github.com/alexzorin/authy"
 	"github.com/momaek/authy/totp"
 	"github.com/sahilm/fuzzy"
 	"github.com/spf13/cobra"
+	"github.com/suchunchen/authy"
 	"golang.org/x/crypto/ssh/terminal"
 )
 

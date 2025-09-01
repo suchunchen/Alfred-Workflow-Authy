@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/alexzorin/authy"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"github.com/suchunchen/authy"
 )
 
 // accountCmd represents the account command

@@ -3,8 +3,7 @@ package totp
 import (
 	"crypto/hmac"
 	"crypto/sha1"
-	"errors"
-	"fmt"
+	"encoding/base32"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -59,36 +58,46 @@ func NewBase32Decode(encode string) *Base32Decode {
 
 // Decode 解码
 func (dec *Base32Decode) Decode(encoded string) ([]byte, error) {
-	encoded = strings.TrimSpace(encoded)
-	encoded = strings.Replace(encoded, "-", "", -1)
-	encoded = strings.Replace(encoded, " ", "", -1)
-	encoded = strings.ToUpper(encoded)
-	if encoded == "" {
-		return []byte{}, nil
+	missingPadding := len(encoded) % 8
+	if missingPadding != 0 {
+		encoded = encoded + strings.Repeat("=", 8-missingPadding)
 	}
-	MASK := len(dec.encode) - 1
-	SHIFT := uint(numberOfTrailingZeros(len(dec.encode)))
-	encodedLength := len(encoded)
-	outLength := encodedLength * int(SHIFT) / 8
-	result := make([]byte, outLength)
-	buffer := 0
-	next := 0
-	bitsLeft := 0
-	for _, c := range encoded {
-		x := dec.decodeMap[c]
-		if x == 0xFF {
-			return nil, errors.New(fmt.Sprintf("Char illegal: %c", c))
-		}
-		buffer <<= SHIFT
-		buffer |= int(x) & MASK
-		bitsLeft += int(SHIFT)
-		if bitsLeft >= 8 {
-			result[next] = byte(buffer >> uint(bitsLeft-8))
-			next += 1
-			bitsLeft -= 8
-		}
-	}
-	return result, nil
+	return base32.StdEncoding.DecodeString(encoded)
+	//if err != nil {
+	//	panic("decode secret failed")
+	//}
+	//
+	//encoded = strings.TrimSpace(encoded)
+	//encoded = strings.Replace(encoded, "-", "", -1)
+	//encoded = strings.Replace(encoded, " ", "", -1)
+	//encoded = strings.ToUpper(encoded)
+	//if encoded == "" {
+	//	return []byte{}, nil
+	//}
+	//
+	//MASK := len(dec.encode) - 1
+	//SHIFT := uint(numberOfTrailingZeros(len(dec.encode)))
+	//encodedLength := len(encoded)
+	//outLength := encodedLength * int(SHIFT) / 8
+	//result := make([]byte, outLength)
+	//buffer := 0
+	//next := 0
+	//bitsLeft := 0
+	//for _, c := range encoded {
+	//	x := dec.decodeMap[c]
+	//	if x == 0xFF {
+	//		return nil, errors.New(fmt.Sprintf("Char illegal: %c", c))
+	//	}
+	//	buffer <<= SHIFT
+	//	buffer |= int(x) & MASK
+	//	bitsLeft += int(SHIFT)
+	//	if bitsLeft >= 8 {
+	//		result[next] = byte(buffer >> uint(bitsLeft-8))
+	//		next += 1
+	//		bitsLeft -= 8
+	//	}
+	//}
+	//return result, nil
 }
 
 func numberOfTrailingZeros(i int) int {
